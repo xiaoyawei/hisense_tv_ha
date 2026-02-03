@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "海信电视配置",
+        "description": "请输入海信智家账号信息和电视设备ID",
+        "data": {
+          "phone": "手机号",
+          "password": "密码",
+          "device_id": "设备ID",
+          "scan_interval": "刷新间隔（秒）"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "登录失败，请检查手机号和密码",
+      "invalid_device": "无法获取设备信息，请检查设备ID",
+      "unknown": "未知错误"
+    },
+    "abort": {
+      "already_configured": "该设备已配置"
+    }
+  }
+}

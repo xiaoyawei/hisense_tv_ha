@@ -1,0 +1,24 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hisense TV Configuration",
+        "description": "Enter your Hisense Smart Home account credentials and TV device ID",
+        "data": {
+          "phone": "Phone Number",
+          "password": "Password",
+          "device_id": "Device ID",
+          "scan_interval": "Scan Interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Login failed, please check phone and password",
+      "invalid_device": "Cannot get device info, please check device ID",
+      "unknown": "Unknown error"
+    },
+    "abort": {
+      "already_configured": "This device is already configured"
+    }
+  }
+}
