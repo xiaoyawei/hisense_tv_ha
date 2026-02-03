@@ -43,16 +43,10 @@ config/
 
 ## 如何获取设备ID
 
-### 方法1：从海信智家小程序抓包
-
 1. 使用抓包工具（如 Charles、Fiddler）
-2. 打开微信海信智家小程序
+2. 打开微信"聚好看"小程序
 3. 查看设备信息
 4. 在请求中找到 `deviceIds` 字段
-
-### 方法2：从 Node-RED 配置中提取
-
-如果你有 Node-RED 配置，查找 `deviceIds` 字段中的值。
 
 ## 实体
 
@@ -65,8 +59,7 @@ config/
 - `device_id`: 设备ID
 - `status_code`: 状态码 (0=关机, 1=开机)
 - `device_name`: 设备名称
-- `model`: 型号
-- `mac`: MAC地址
+- `ip`: IP地址
 
 ## 注意事项
 
