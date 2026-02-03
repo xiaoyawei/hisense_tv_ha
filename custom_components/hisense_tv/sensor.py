@@ -8,6 +8,7 @@ from datetime import timedelta
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -47,24 +48,40 @@ async def async_setup_entry(
 
     await coordinator.async_config_entry_first_refresh()
 
-    async_add_entities([HisenseTVSensor(coordinator, device_id, entry)])
+    async_add_entities([HisenseTVSensor(coordinator, device_id)])
 
 
 class HisenseTVSensor(CoordinatorEntity, SensorEntity):
     """Hisense TV status sensor."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         coordinator: DataUpdateCoordinator,
         device_id: str,
-        entry: ConfigEntry,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._device_id = device_id
         self._attr_unique_id = f"hisense_tv_{device_id}_status"
-        self._attr_name = "海信电视状态"
+        self._attr_name = "状态"
         self._attr_icon = "mdi:television"
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device info."""
+        device_name = "海信电视"
+        if self.coordinator.data and "raw" in self.coordinator.data:
+            raw = self.coordinator.data["raw"]
+            device_name = raw.get("defaultAlias") or "海信电视"
+
+        return DeviceInfo(
+            identifiers={(DOMAIN, self._device_id)},
+            name=device_name,
+            manufacturer="Hisense",
+            model="Smart TV",
+        )
 
     @property
     def native_value(self) -> str | None:
@@ -81,8 +98,7 @@ class HisenseTVSensor(CoordinatorEntity, SensorEntity):
             return {
                 "device_id": self._device_id,
                 "status_code": self.coordinator.data.get("status"),
-                "device_name": raw.get("deviceName"),
-                "model": raw.get("model"),
-                "mac": raw.get("mac"),
+                "device_name": raw.get("defaultAlias"),
+                "ip": raw.get("ip"),
             }
         return {"device_id": self._device_id}

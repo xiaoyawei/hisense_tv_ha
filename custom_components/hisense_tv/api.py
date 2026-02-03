@@ -4,7 +4,13 @@ import logging
 import time
 import aiohttp
 
-from .const import LOGIN_URL, DEVICE_INFO_URL, STATUS_MAP
+from .const import (
+    LOGIN_URL,
+    DEVICE_INFO_URL,
+    STATUS_MAP,
+    LOGIN_DISTRIBUTE_ID,
+    DEVICE_DISTRIBUTE_ID,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +53,7 @@ class HisenseTVApi:
 
         payload = {
             "deviceType": "1",
-            "distributeId": "2001",
+            "distributeId": LOGIN_DISTRIBUTE_ID,
             "loginName": self._phone,
             "serverCode": "9501",
             "signature": self._password,
@@ -80,7 +86,7 @@ class HisenseTVApi:
             _LOGGER.error("Login error: %s", e)
             return False
 
-    async def get_device_status(self) -> dict | None:
+    async def get_device_status(self, retry: bool = True) -> dict | None:
         """Get device status."""
         if not self._token:
             if not await self.login():
@@ -102,7 +108,7 @@ class HisenseTVApi:
             "deviceType": 3,
             "type": 1,
             "deviceid": "ha_integration",
-            "distributeId": 1001,
+            "distributeId": DEVICE_DISTRIBUTE_ID,
             "sign": "",
             "appKey": "commonweb",
         }
@@ -113,8 +119,11 @@ class HisenseTVApi:
             ) as resp:
                 if resp.status != 200:
                     _LOGGER.error("Get device status failed with status %s", resp.status)
-                    # Token might be expired, clear it
+                    # Token might be expired, try to re-login and retry
                     self._token = None
+                    if retry:
+                        _LOGGER.info("Retrying after re-login...")
+                        return await self.get_device_status(retry=False)
                     return None
 
                 data = await resp.json()
@@ -122,7 +131,11 @@ class HisenseTVApi:
 
                 if "data" in data and len(data["data"]) > 0:
                     device_data = data["data"][0]
-                    status_code = device_data.get("status", -1)
+                    # API 返回的 status 可能是字符串，需要转换为整数
+                    try:
+                        status_code = int(device_data.get("status", -1))
+                    except (ValueError, TypeError):
+                        status_code = -1
                     return {
                         "status": status_code,
                         "status_text": STATUS_MAP.get(status_code, "未知"),
@@ -130,8 +143,11 @@ class HisenseTVApi:
                     }
                 else:
                     _LOGGER.error("Device status response missing data: %s", data)
-                    # Token might be expired
+                    # Token might be expired, try to re-login and retry
                     self._token = None
+                    if retry:
+                        _LOGGER.info("Retrying after re-login...")
+                        return await self.get_device_status(retry=False)
                     return None
 
         except Exception as e:

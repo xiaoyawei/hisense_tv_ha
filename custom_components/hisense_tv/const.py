@@ -6,6 +6,10 @@ DOMAIN = "hisense_tv"
 LOGIN_URL = "https://portal-account.hismarttv.com/mobile/signon"
 DEVICE_INFO_URL = "https://public-wxtv.hismarttv.com/mobiletv/device/deviceInfo"
 
+# API parameters
+LOGIN_DISTRIBUTE_ID = "2001"
+DEVICE_DISTRIBUTE_ID = 1001
+
 # Config keys
 CONF_PHONE = "phone"
 CONF_PASSWORD = "password"

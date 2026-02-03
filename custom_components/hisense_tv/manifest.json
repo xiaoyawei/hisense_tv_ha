@@ -2,9 +2,9 @@
   "domain": "hisense_tv",
   "name": "Hisense TV (海信电视)",
   "version": "1.0.0",
-  "documentation": "https://github.com/your-repo/hisense_tv_ha",
+  "documentation": "https://github.com/xiaoyawei/hisense_tv_ha",
   "dependencies": [],
-  "codeowners": [],
+  "codeowners": ["@xiaoyawei"],
   "requirements": ["aiohttp>=3.8.0"],
   "iot_class": "cloud_polling",
   "config_flow": true

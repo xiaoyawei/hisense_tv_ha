@@ -28,6 +28,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Test login
     if not await api.login():
         _LOGGER.error("Failed to login to Hisense cloud")
+        await api.close()
         return False
 
     hass.data[DOMAIN][entry.entry_id] = api
